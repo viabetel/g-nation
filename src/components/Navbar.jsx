@@ -218,7 +218,7 @@ export default function Navbar({ variant = "overlay" }) {
       </div>
 
       <Link className="navbar__logo" to="/">
-        <img src="/assets/colecao/navbar-logo.png" alt="G-Nation" />
+        <img src="/assets/colecao/navbar-logo.webp" alt="G-Nation" />
       </Link>
 
       {/* Os três ícones do Figma fazem o que prometem: carrinho abre a
@@ -232,7 +232,7 @@ export default function Navbar({ variant = "overlay" }) {
         >
           <span
             className="navbar__icon"
-            style={{ maskImage: "url(/assets/colecao/mask-cart.png)", WebkitMaskImage: "url(/assets/colecao/mask-cart.png)" }}
+            style={{ maskImage: "url(/assets/colecao/mask-cart.webp)", WebkitMaskImage: "url(/assets/colecao/mask-cart.webp)" }}
           />
           {totalItens > 0 && <span className="navbar__badge">{totalItens}</span>}
         </button>
@@ -246,7 +246,7 @@ export default function Navbar({ variant = "overlay" }) {
         >
           <span
             className="navbar__icon"
-            style={{ maskImage: "url(/assets/colecao/mask-user.png)", WebkitMaskImage: "url(/assets/colecao/mask-user.png)" }}
+            style={{ maskImage: "url(/assets/colecao/mask-user.webp)", WebkitMaskImage: "url(/assets/colecao/mask-user.webp)" }}
           />
         </Link>
         {/* BUSCA DE VERDADE. Era um <Link to="/colecao/g-shop">: clicar na
@@ -277,7 +277,7 @@ export default function Navbar({ variant = "overlay" }) {
           >
             <span
               className="navbar__icon"
-              style={{ maskImage: "url(/assets/colecao/mask-search.png)", WebkitMaskImage: "url(/assets/colecao/mask-search.png)" }}
+              style={{ maskImage: "url(/assets/colecao/mask-search.webp)", WebkitMaskImage: "url(/assets/colecao/mask-search.webp)" }}
             />
           </button>
         </div>

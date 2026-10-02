@@ -18,6 +18,7 @@ import {
 } from "../lib/br";
 import "./CheckoutPage.css";
 import { fotoProduto } from "../lib/img";
+import { rolarAte } from "./SmoothScroll";
 import { criarCheckoutShopify, shopifyConfigurado } from "../lib/shopify";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -286,10 +287,8 @@ export default function CheckoutPage() {
     e.preventDefault();
     setErroGeral("");
     if (!validar()) {
-      document.querySelector(".ck__campo-erro")?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+      const erro = document.querySelector(".ck__campo-erro");
+      if (erro) rolarAte(erro, { offset: -window.innerHeight / 3 });
       return;
     }
 

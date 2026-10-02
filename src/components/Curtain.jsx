@@ -1,21 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import "./Curtain.css";
 import ImageCrossfade from "./ImageCrossfade";
 import LogoG from "./LogoG";
-import { useCatalog } from "../CatalogContext";
-import PecaCard from "./PecaCard";
 
 const LEFT_IMAGES = [
   "/assets/hero/slice-left-1.png",
-  "/assets/hero/slice-left-2.jpg",
+  "/assets/hero/slice-left-2.webp",
   "/assets/hero/slice-left-3.jpg",
 ];
 
 const RIGHT_IMAGES = [
-  "/assets/hero/slice-right-1.png",
-  "/assets/hero/slice-right-2.jpg",
+  "/assets/hero/slice-right-1.webp",
+  "/assets/hero/slice-right-2.webp",
   "/assets/hero/slice-right-3.jpg",
 ];
 
@@ -26,45 +23,6 @@ const RIGHT_IMAGES = [
 // Ordem preferida da faixa de lançamentos. Quem marcar "mostrar em
 // destaque" no painel entra na frente — é assim que o dono promove uma
 // coleção nova sem pedir deploy.
-const PREFERIDAS = [
-  "trevo-royal",
-  "trevo-rose",
-  "trevo-gold",
-  "cubana-cravejada",
-  "tennis-ice",
-  "anel-cruz-ice",
-];
-
-// QUANTAS PEÇAS ESTA FAIXA COMPORTA — e por quê.
-//
-// TETO 6. A grade é de 3 colunas e vive DENTRO do pin da cortina: a
-// seção inteira precisa caber numa tela, senão o pin ganha scroll
-// interno e a rolagem trava no meio da animação. Duas fileiras de 3
-// (com a foto em min(20vh,210px)) é o que cabe. Uma terceira fileira
-// estoura.
-//
-// SEMPRE MÚLTIPLO DE 3. A malha desenha o fio vertical em toda célula
-// que não seja a 3ª da fileira; com 4 ou 5 peças a última fileira fica
-// pela metade e o retângulo da moldura abre um buraco. Então 6 peças, ou
-// 3 — nunca 4, 5, 7.
-//
-// Isso é limite de LAYOUT, não de catálogo: o dono pode marcar quantas
-// peças quiser como destaque no painel, que a home mostra as 6
-// primeiras. O aviso na tela de Produtos explica isso pra ele.
-// A contagem depende do LAYOUT, que muda com a tela:
-//   desktop → grade de 3 colunas, 2 fileiras = 6 peças
-//   celular → grade de 2 colunas, 2 fileiras = 4 peças
-// No celular, tentar encaixar 6 numa grade de 2 colunas dá 3 fileiras
-// dentro do pin: a seção não cabe na tela travada, as fotos comprimem e
-// cortam (foi o que o usuário viu). 4 (2×2) respira e mostra a peça
-// inteira. Sempre múltiplo do número de colunas, pra malha não abrir
-// buraco na última fileira.
-const CONFIG_DESKTOP = { cabem: 6, porFileira: 3 };
-const CONFIG_MOBILE = { cabem: 4, porFileira: 2 };
-
-// Media query reativa: recalcula quando a largura cruza o ponto do
-// layout mobile (o mesmo 900px em que a grade da Curtain vira 2 colunas),
-// inclusive ao girar o aparelho.
 function useEhMobile() {
   const [ehMobile, setEhMobile] = useState(
     typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches
@@ -78,37 +36,6 @@ function useEhMobile() {
   return ehMobile;
 }
 
-function useLancamentos() {
-  const { produtos, destaques } = useCatalog();
-  const ehMobile = useEhMobile();
-  const { cabem, porFileira } = ehMobile ? CONFIG_MOBILE : CONFIG_DESKTOP;
-
-  const preferidas = PREFERIDAS.map((s) => produtos.find((p) => p.slug === s)).filter(
-    Boolean
-  );
-
-  // Ordem: quem está em destaque no painel primeiro, depois a lista
-  // preferida do desenho original, depois o resto do catálogo — assim a
-  // faixa se completa sozinha mesmo que o dono tire peças de linha.
-  const vistos = new Set();
-  const fila = [...destaques, ...preferidas, ...produtos].filter((p) =>
-    vistos.has(p.slug) ? false : vistos.add(p.slug)
-  );
-
-  // Arredonda PRA BAIXO até fechar a fileira. Catálogo com 5 peças
-  // ativas mostra 4 (mobile) ou 3 (desktop), nunca a malha quebrada.
-  const teto = Math.min(fila.length, cabem);
-  const cheias = teto - (teto % porFileira);
-  return fila.slice(0, cheias);
-}
-
-// O visual do card mora em <PecaCard/> — o mesmo que o "Confira também"
-// usa. Aqui fica só a classe da malha (curtain__lanc-card), que desenha
-// os fios entre as células desta grade.
-function LancCard({ p, i }) {
-  return <PecaCard p={p} i={i} className="curtain__lanc-card" />;
-}
-
 // Faithful port of the real Hero Section scroll effect (augiA20Il.js):
 // __framer__transformTrigger:"onScrollTarget", threshold 0.5, x target ±1000px.
 // As you scroll through the pin, the two photo halves split apart like
@@ -117,11 +44,13 @@ function LancCard({ p, i }) {
 // leve subida) na segunda metade do scroll do pin, depois que as fotos já
 // se abriram.
 export default function Curtain() {
-  const LANCAMENTOS = useLancamentos();
   const curtainRef = useRef(null);
+  // Progresso = o curso da trava (topo da seção no topo da tela até o fim
+  // dela no fim da tela): 700px, o mesmo --porta-curso que a grade dos
+  // Lançamentos usa para chegar ao lugar quando as portas terminam de abrir.
   const { scrollYProgress } = useScroll({
     target: curtainRef,
-    offset: ["start start", "end start"],
+    offset: ["start start", "end end"],
   });
 
   // Timing auditado com puppeteer (amostrando pinTop/opacity a cada 2% do
@@ -147,34 +76,13 @@ export default function Curtain() {
   // Empilhado, a porta abre para CIMA e para BAIXO. É o mesmo gesto, no
   // eixo em que as peças realmente estão, e não um efeito substituto.
   const ehMobileCena = useEhMobile();
-  const saiA = useTransform(scrollYProgress, [0.09, 0.32], [0, -1000]);
-  const saiB = useTransform(scrollYProgress, [0.09, 0.32], [0, 1000]);
+  const saiA = useTransform(scrollYProgress, [0.06, 0.94], ["0%", "-101%"]);
+  const saiB = useTransform(scrollYProgress, [0.06, 0.94], ["0%", "101%"]);
   const abreA = ehMobileCena ? { y: saiA } : { x: saiA };
   const abreB = ehMobileCena ? { y: saiB } : { x: saiB };
 
-  // O fade contínuo via useTransform (opacity) não estava atualizando neste
-  // projeto (framer-motion 12 + React 19) — o valor ficava travado no
-  // inicial mesmo com o scroll avançando, enquanto x/y funcionavam normal.
-  // Troquei por um estado booleano (dispara quando o scroll cruza o ponto
-  // logo depois da cortina abrir) + transição CSS, que é confiável.
-  //
-  // Reveal em 0.24, antes das fotos terminarem de sair (0.32) — janela de
-  // sobreposição de 0.08 (160px) pra transição CSS de 0.6s completar sem
-  // vão preto no meio.
-  // O 0.24 foi calibrado pra abertura HORIZONTAL: no desktop o vão entre
-  // as portas é uma faixa vertical estreita, e uns quadros de preto ali
-  // não pesam. Empilhado, o vão é uma faixa que atravessa a tela inteira,
-  // e o mesmo atraso deixava uma tela quase toda preta enquanto as portas
-  // se afastavam (visto em 390x844, y=5650). No celular o conteúdo entra
-  // logo depois de as portas começarem a andar (0.09), de modo que o que
-  // aparece no vão seja a seção, não o fundo.
-  const [lancRevealed, setLancRevealed] = useState(false);
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setLancRevealed(v >= (ehMobileCena ? 0.13 : 0.24));
-  });
-
   return (
-    <section className="curtain" id="lancamentos" ref={curtainRef}>
+    <section className="curtain" id="categorias" ref={curtainRef}>
       <div className="curtain__pin">
         <div className="curtain__slices">
           <motion.div className="curtain__slice" style={abreA}>
@@ -190,12 +98,8 @@ export default function Curtain() {
               <motion.a
                 className="curtain__tag-cta"
                 href="/colecao/g-shop"
-                whileHover={{ scale: 1.04, y: -3 }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: "spring", stiffness: 420, damping: 24 }}
               >
                 <span>Ver peças</span>
-                <img className="curtain__tag-cta-icon" src="/assets/sections/arrow-right.svg" alt="" />
               </motion.a>
             </motion.div>
           </motion.div>
@@ -213,61 +117,12 @@ export default function Curtain() {
               <motion.a
                 className="curtain__tag-cta"
                 href="/colecao/g-customizadas"
-                whileHover={{ scale: 1.04, y: -3 }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: "spring", stiffness: 420, damping: 24 }}
               >
                 <span>Ver customizadas</span>
-                <img className="curtain__tag-cta-icon" src="/assets/sections/arrow-right.svg" alt="" />
               </motion.a>
             </motion.div>
           </motion.div>
 
-          <div className="curtain__white-under">
-            <div
-              className={`curtain__lancamentos${lancRevealed ? " is-visible" : ""}`}
-            >
-              {/* Porta o design real da seção "Featured Works" do template
-                  espelho (grateful-popup-643840.framer.app, WorksSection
-                  nodeId JQTMXIAPF): fundo preto sólido (backgroundColor
-                  rgb(0,0,0) confirmado no XML do Framer, sem textura),
-                  heading H2 grande + parágrafo centralizados, grid 2x2 de
-                  cards full-bleed (sem moldura branca), botão ghost pill
-                  "Secondary" embaixo — a mesma peça já usada nas tags
-                  G-Shop/G-Customizadas do Categoria. Fotos: a macro de pulseira já usada
-                  nesta seção (não as fotos de coquetel/carro/perfume/
-                  cadeira do template, que não fazem sentido pra joalheria). */}
-              <div className="curtain__lanc-head">
-                <h2>
-                  <span className="tw-solid">LANÇAMENTOS</span>
-                  <span className="tw-outline">PESO NOVO</span>
-                </h2>
-                <p>
-                  Cravação densa, banho reforçado, presença de vitrine.
-                </p>
-              </div>
-
-              <div className="curtain__lanc-grid">
-                {LANCAMENTOS.map((p, i) => (
-                  <LancCard p={p} i={i} key={p.title} />
-                ))}
-              </div>
-
-              {/* "Ver mais" apontava pra /projects, rota que nunca
-                  existiu — clicar dava tela branca. O destino real é a
-                  vitrine. */}
-              <motion.div
-                whileHover={{ scale: 1.04, y: -3 }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: "spring", stiffness: 420, damping: 24 }}
-              >
-                <Link className="curtain__lanc-more" to="/colecao/g-shop">
-                  <span>Ver mais</span>
-                  <img className="curtain__lanc-more-icon" src="/assets/sections/arrow-right.svg" alt="" />
-                </Link>
-              </motion.div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

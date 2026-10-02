@@ -29,11 +29,13 @@
    proporção real do arquivo) que encolhe com a altura disponível em vez
    de um valor fixo, e espaçamento vertical do bloco de info reduzido em
    todos os níveis pra bater com a altura da foto. */
+/* foto PARADA à esquerda, informações rolando à direita (mesma lógica da
+   coluna do Copan nos Lançamentos) */
 .pp__main {
   display: flex;
   gap: 64px;
-  padding: 48px 80px;
-  align-items: center;
+  padding: 48px 80px 120px;
+  align-items: flex-start;
   min-height: calc(100vh - var(--gn-navbar-h));
 }
 
@@ -44,13 +46,15 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: sticky;
+  top: 32px;
 }
 
 .pp__main-photo {
   width: 100%;
   aspect-ratio: 1;
-  max-height: min(64vh, 680px);
-  max-width: min(64vh, 680px);
+  max-height: calc(100vh - 64px);
+  max-width: calc(100vh - 64px);
   overflow: hidden;
   background: #f4f4f4;
 }
@@ -507,6 +511,11 @@
     max-width: 100%;
     max-height: 60vh;
   }
+  /* empilhado, nada fica preso */
+  .pp__gallery {
+    position: relative;
+    top: 0;
+  }
   /* "Confira também": o título deixa de disputar coluna com os cards e
      vai pra cima, mas os CARDS continuam em 3 colunas — são peças pra
      comparar, empilhar uma embaixo da outra desperdiça a tela. */
@@ -638,4 +647,45 @@
     display: inline-block;
     padding: 13px 0;
   }
+}
+
+/* detalhes da peça (dados do catálogo) */
+.pp__detalhes {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 8px;
+}
+.pp__detalhes h3 {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 18px;
+  color: #000;
+}
+.pp__detalhes dl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pp__detalhes dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e6e6e6;
+  font-family: var(--font-opensauce);
+  font-size: 14px;
+}
+.pp__detalhes dt {
+  color: #888;
+}
+.pp__detalhes dd {
+  margin: 0;
+  color: #000;
+  font-weight: 700;
+  text-align: right;
+}
+.pp__detalhes dd.is-ultimas {
+  color: var(--gn-red);
 }

@@ -82,7 +82,7 @@
 .cp__filter-pill {
   background: #fff;
   border: 1px solid #000;
-  border-radius: 100px;
+  border-radius: 0;
   padding: 12px 24px;
   /* mesma voz dos outros CTAs (ui 700, 0.04em); o pill branco de borda
      preta e o tamanho vêm do Figma e ficam como estão. */

@@ -172,7 +172,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 3px;
+  border-radius: 0;
 }
 
 .footer__pay img {
@@ -321,28 +321,31 @@
 .footer__pay-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
+/* Logo de pagamento: o próprio SVG já é o cartão (fundo na cor da marca,
+   cantos retos), então o item não leva moldura nem fundo. `background` e
+   `border-radius` declarados porque a regra antiga lá em cima ainda pinta
+   fundo branco 32x30. */
 .footer__pay {
-  display: inline-flex;
-  align-items: center;
-  width: auto;
-  height: auto;
-  padding: 7px 11px;
-  /* `background` e `border-radius` PRECISAM ser declarados: a regra
-     antiga (que era a moldura branca de um ícone) continua no arquivo e
-     vence por especificidade igual + ordem se estas não vierem. Sem elas
-     o chip herdava fundo branco com texto branco — invisível, o mesmo
-     erro do botão do painel. */
+  display: block;
+  width: 39px;
+  height: 25px;
+  padding: 0;
   background: transparent;
   border-radius: 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.75);
-  font-family: var(--font-display);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  border: 0;
+}
+
+.footer__pay img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: none;
 }
 
 /* ---------- ÁREA DE TOQUE DOS CHIPS DO RODAPÉ ----------

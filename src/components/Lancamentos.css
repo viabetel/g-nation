@@ -1,0 +1,275 @@
+/* LANÇAMENTOS + BANNER (ver o comentário do Lancamentos.jsx).
+   Encaixe com a Categoria: a seção começa EMBAIXO das portas (margem
+   negativa = altura da Categoria, --porta-curso) e a grade nasce deslocada
+   exatamente o curso das portas: quando elas terminam de abrir, a grade
+   chegou ao lugar. */
+.lanc {
+  --porta-curso: 700px;
+  --coluna: 44.1667%; /* 636 de 1440: régua da OUD */
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-100vh - var(--porta-curso));
+  background: #080808;
+  /* a grade sai pela direita: clip corta sem criar rolagem lateral e sem
+     quebrar o sticky (hidden quebraria) */
+  overflow-x: clip;
+}
+
+/* ---------- palco preso ---------- */
+.lanc__palco {
+  position: sticky;
+  top: var(--gn-navbar-h, 90px);
+  height: calc(100vh - var(--gn-navbar-h, 90px));
+  overflow: hidden;
+}
+
+/* janela: o recorte que abre da coluna para a largura toda (clip-path no JS) */
+.lanc__janela {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  clip-path: inset(0 calc(100% - var(--coluna)) 0 0);
+}
+
+/* câmera: a foto inteira na largura do palco; o JS escala e desloca */
+.lanc__camera {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  transform-origin: 0 0;
+  transform: translateY(-13.7%) scale(0.4417);
+  will-change: transform;
+}
+.lanc__camera > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* grão: camada própria, para não pesar a foto e ficar nítido em qualquer
+   escala da câmera */
+.lanc__grao {
+  position: absolute;
+  inset: 0;
+  background: url(/assets/lancamentos/grao.png) repeat;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* selo: o único vermelho da peça, com a marca G real, preso na dobra da
+   curva (coordenadas da própria foto: x 66%, y 59%) */
+.lanc__selo {
+  position: absolute;
+  left: 66%;
+  top: 59%;
+  /* 10% da foto: 64px na coluna, 144px no banner. Altura pelo padding
+     (aspect-ratio com filho de altura % entrava em ciclo e esticava) */
+  width: 10%;
+  height: 0;
+  padding-bottom: 10%;
+  background: var(--gn-red);
+}
+.lanc__selo img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 66%;
+  width: auto;
+  transform: translate(-50%, -50%);
+}
+
+/* ---------- textos da coluna ---------- */
+.lanc__coluna {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--coluna);
+  z-index: 1;
+  pointer-events: none;
+}
+.lanc__coluna a {
+  pointer-events: auto;
+}
+/* fio da grade do Figma (hairline x=46), atravessando a coluna inteira */
+.lanc__fio {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 46px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.28);
+}
+.lanc__foto-texto {
+  position: absolute;
+  left: 70px;
+  top: 44px;
+  right: 40px;
+}
+.lanc__titulo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: clamp(38px, 5vw, 76px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.lanc__frase {
+  margin: 16px 0 0;
+  max-width: 300px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.78);
+}
+/* legenda vertical correndo junto do fio */
+.lanc__legenda {
+  position: absolute;
+  left: 46px;
+  bottom: 40px;
+  margin: 0;
+  transform: rotate(-90deg) translate(0, -100%);
+  transform-origin: 0 100%;
+  translate: -14px 0;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+.lanc__legenda b {
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  margin: 0 10px 3px;
+  background: rgba(255, 255, 255, 0.7);
+  vertical-align: middle;
+}
+.lanc__todas {
+  position: absolute;
+  left: 70px;
+  bottom: 40px;
+}
+
+/* ---------- chamada do banner (entra com a janela aberta) ---------- */
+.lanc__banner {
+  position: absolute;
+  z-index: 2;
+  left: 70px;
+  top: 48px;
+}
+.lanc__banner-titulo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: clamp(40px, 5.4vw, 82px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.lanc__banner-cta {
+  margin-top: 28px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+}
+
+/* ---------- grade que rola por cima, à direita ----------
+   Sobe para dentro do palco (margem negativa) e começa deslocada o curso
+   das portas. Fechada: o fio de 1px entre as peças é o fundo pelo vão. */
+.lanc__grade {
+  /* presa com a última fileira no pé da tela enquanto a pista passa; o JS
+     mede a altura (--grade-h) e desliza a grade para a direita */
+  position: sticky;
+  top: calc(100vh - var(--grade-h, 100vh));
+  z-index: 2;
+  margin-top: calc(var(--gn-navbar-h, 90px) * 2 + var(--porta-curso) - 100vh);
+  margin-left: var(--coluna);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+}
+/* o fio entre as peças é desenhado no próprio card: com o fio no fundo da
+   grade, a peça que ainda está entrando (transparente) mostrava uma faixa
+   cinza */
+.lanc__grade .joia {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+/* pista da abertura: o palco fica preso enquanto ela passa */
+.lanc__pista {
+  height: 130vh;
+}
+
+/* ---------- celular: foto em cima, grade embaixo, banner em bloco próprio ---------- */
+@media (max-width: 900px) {
+  .lanc {
+    --coluna: 100%;
+    margin-top: calc(-100dvh - var(--porta-curso));
+    padding-top: calc(var(--gn-navbar-h, 90px) + var(--porta-curso));
+  }
+  .lanc__palco {
+    position: relative;
+    top: 0;
+    height: 72vh;
+    height: 72dvh;
+  }
+  .lanc__janela {
+    clip-path: none;
+  }
+  .lanc__camera {
+    inset: 0;
+    transform: none;
+  }
+  .lanc__camera > img {
+    height: 100%;
+    object-fit: cover;
+    object-position: 75% 42%;
+  }
+  .lanc__selo {
+    left: auto;
+    right: 6vw;
+    top: 46%;
+    width: 64px;
+  }
+  .lanc__foto-texto {
+    left: 5vw;
+    right: 5vw;
+    top: 28px;
+  }
+  .lanc__fio,
+  .lanc__legenda {
+    display: none;
+  }
+  .lanc__todas {
+    left: 5vw;
+    bottom: 24px;
+  }
+  .lanc__grade {
+    position: relative;
+    top: 0;
+    margin: 1px 0 0;
+  }
+  .lanc__pista {
+    display: none;
+  }
+  .lanc__banner-movel {
+    position: relative;
+    height: 80vh;
+    height: 80dvh;
+    padding: 32px 5vw;
+    background: url(/assets/lancamentos/copan-inteiro.webp) 30% 62% / cover no-repeat;
+  }
+  .lanc__banner-titulo {
+    font-size: 34px;
+  }
+}

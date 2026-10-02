@@ -95,7 +95,7 @@
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--gn-red, #ff0000);
   color: #fff;
   font-size: 10px;

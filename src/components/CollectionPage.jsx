@@ -7,6 +7,7 @@ import Wordmark from "./Wordmark";
 import Navbar from "./Navbar";
 import FiltrosVitrine, { aplicarFiltros, faixasDe } from "./FiltrosVitrine";
 import "./CollectionPage.css";
+import { rolarAte } from "./SmoothScroll";
 import { fotoProduto } from "../lib/img";
 
 // quantas peças por página da vitrine (grade 3 colunas → 2 fileiras)
@@ -105,7 +106,7 @@ export default function CollectionPage() {
       <Navbar variant="inline" />
 
       <header className="cp__hero">
-        <img className="cp__hero-bg" src="/assets/colecao/hero-correntes.png" alt="" />
+        <img className="cp__hero-bg" src="/assets/colecao/hero-correntes.webp" alt="" />
         <div className="cp__hero-veil" />
         <div className="cp__hero-mask">
           <motion.h1
@@ -208,7 +209,7 @@ export default function CollectionPage() {
               className={`cp__page${n === current ? " is-active" : ""}`}
               onClick={() => {
                 setPage(n);
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                rolarAte(0);
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}

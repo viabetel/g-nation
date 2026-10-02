@@ -1,9 +1,11 @@
 import { Routes, Route, useParams, useLocation } from "react-router-dom";
 import RadarBackground from "./components/RadarBackground";
 import SoundToggle from "./components/SoundToggle";
+import SmoothScroll from "./components/SmoothScroll";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Curtain from "./components/Curtain";
+import Lancamentos from "./components/Lancamentos";
 import Depoimentos from "./components/Depoimentos";
 import ImageGrid from "./components/ImageGrid";
 import OutrosProdutos from "./components/OutrosProdutos";
@@ -14,6 +16,7 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import AccountPage from "./components/AccountPage";
 import NotFoundPage from "./components/NotFoundPage";
+import { ContatoPage, TrocasPage, PrivacidadePage } from "./components/Institucional";
 import CheckoutPage from "./components/CheckoutPage";
 import OrderPage from "./components/OrderPage";
 import CartDrawer from "./components/CartDrawer";
@@ -42,11 +45,18 @@ function Home() {
     <>
       <Navbar />
       <main>
-        <Hero />
-        <Curtain />
+        {/* hero preso + Categoria subindo por cima como cortina */}
+        <div className="hero-cortina">
+          <Hero />
+          <Curtain />
+        </div>
+        {/* nasce embaixo das portas da Categoria e aparece quando elas abrem */}
+        <Lancamentos />
         <Depoimentos />
-        <ImageGrid />
+        {/* o banner duplo desceu: logo depois do banner do Copan seriam duas
+            faixas de foto seguidas */}
         <OutrosProdutos />
+        <ImageGrid />
       </main>
       <Footer />
     </>
@@ -75,8 +85,14 @@ function CollectionPageRoute() {
 // enquanto o dono despacha pedido é ruído, não atmosfera.
 const ROTAS_SEM_SOM = ["/login", "/criar-conta", "/admin"];
 
+// Música ligada (pedido do cliente: tocar sozinha, botão para silenciar).
+// O navegador só libera som depois da primeira interação; o SoundToggle
+// tenta ao abrir e de novo no primeiro clique ou toque em qualquer lugar.
+const SOM_LIGADO = true;
+
 function SiteSound() {
   const { pathname } = useLocation();
+  if (!SOM_LIGADO) return null;
   const nua = ROTAS_SEM_SOM.some((r) => pathname.startsWith(r));
   return nua ? null : <SoundToggle />;
 }
@@ -90,6 +106,7 @@ function App() {
         catálogo, nunca o contrário. */}
     <CatalogProvider>
     <CartProvider>
+      <SmoothScroll />
       <RadarBackground />
       <SiteSound />
       <div className="app-content">
@@ -106,6 +123,11 @@ function App() {
           <Route path="/conta" element={<AccountPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/pedido/:id" element={<OrderPage />} />
+          {/* institucionais: o menu e o rodapé já apontavam para /contato,
+              que não existia */}
+          <Route path="/contato" element={<ContatoPage />} />
+          <Route path="/trocas-e-devolucoes" element={<TrocasPage />} />
+          <Route path="/politica-de-privacidade" element={<PrivacidadePage />} />
 
           {/* PAINEL DA LOJA (Figma 27:545). Rotas aninhadas: a sidebar
               vive no AdminLayout e cada seção tem URL própria — assim o

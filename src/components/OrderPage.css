@@ -179,7 +179,7 @@
   min-width: 19px;
   height: 19px;
   padding: 0 5px;
-  border-radius: 999px;
+  border-radius: 0;
   background: #000;
   color: #fff;
   font-family: var(--font-ui);

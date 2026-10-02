@@ -19,8 +19,8 @@ export default function Wordmark({ className = "", flat = false, ink = false }) 
       role="img"
       aria-label="G-Nation"
     >
-      <img src="/assets/brand/g-mark.png" alt="" aria-hidden="true" draggable="false" />
-      <img src="/assets/brand/nation-mark.png" alt="" aria-hidden="true" draggable="false" />
+      <img src="/assets/brand/g-mark.webp" alt="" aria-hidden="true" draggable="false" />
+      <img src="/assets/brand/nation-mark.webp" alt="" aria-hidden="true" draggable="false" />
     </span>
   );
 }

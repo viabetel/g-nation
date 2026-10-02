@@ -1,63 +1,29 @@
-/* Hero = mecanismo da Categoria, horizontal, em 3 fases pinadas:
-   A) painéis se afastam e revelam SÓ o vídeo (fundo);
-   B) dwell — o vídeo fica pinado sozinho, respirando;
-   C) a Categoria sobe POR CIMA (cover) — feito no Curtain.css com
-      z-index + margin-top negativo, escorregando sobre este hero ainda
-      pinado. z-index:1 garante que a Categoria (z2) cubra. */
-.hero {
+/* Hero de uma tela, preso no topo enquanto a Categoria sobe por cima
+   (cortina). A trava fica restrita ao .hero-cortina (Home, App.jsx), que
+   envolve só o hero e a Categoria: depois dela o hero solta e não aparece
+   por trás das seções seguintes. */
+.hero-cortina {
   position: relative;
-  /* 640vh: papel abre nos primeiros ~50vh, o filme de 8s roda quadro a
-     quadro até 70% e sobra dwell pra Categoria cobrir. */
-  height: 640vh;
-  z-index: 1;
 }
 
-.hero__defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-}
-
-.hero__pin {
+.hero {
   position: sticky;
   top: 0;
-  /* O PALCO E O FILME NA MESMA RÉGUA. O palco estava em `vh` e o filme
-     dentro dele em `dvh` (ver .hero__screen no bloco de 860px). No
-     desktop os dois valem o mesmo e ninguém vê; no celular `vh` conta a
-     tela COM a barra do navegador recolhida e `dvh` conta a tela como
-     ela está agora, então enquanto a barra aparece o palco fica mais
-     alto que o filme: sobra uma faixa preta embaixo, e o card do
-     capítulo, ancorado em `bottom: 6vh`, cai atrás da barra.
-     `dvh` nos dois: a cena inteira acompanha o que está visível. */
+  z-index: 1;
+  /* dvh: acompanha a barra do navegador do celular (vh deixava faixa preta) */
   height: 100vh;
   height: 100dvh;
-  overflow: hidden;
 }
 
-/* FUNDO real: joia full-bleed atrás dos painéis (z0). Revelada na fresta
-   quando os painéis se afastam. */
-.hero__joia {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* O "telão": quadro 16:9 do filme. Nasce em 112vw (cobre a viewport toda,
-   igual full-bleed) e recua pra 70vw quando a cortina termina de abrir,
-   mostrando o enquadramento inteiro sobre o radar. A largura é animada
-   inline (framer-motion). */
-.hero__screen {
+.hero__palco {
   position: relative;
-  aspect-ratio: 16 / 9;
-  flex: none;
+  height: 100%;
   overflow: hidden;
   background: #000;
 }
-.hero__joia-media {
+
+/* filme em tela cheia, por trás da navbar */
+.hero__video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -65,479 +31,110 @@
   object-fit: cover;
   object-position: center;
 }
-.hero__joia-veil {
+
+/* véu só onde há texto: topo (navbar) e base (ações e faixa). O meio fica
+   limpo, é o filme. */
+.hero__veu {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(13, 13, 13, 0) 0%,
-    rgba(13, 13, 13, 0.28) 76%,
-    rgba(13, 13, 13, 0.55) 100%
+  background: linear-gradient(
+    180deg,
+    rgba(13, 13, 13, 0.45) 0%,
+    rgba(13, 13, 13, 0) 18%,
+    rgba(13, 13, 13, 0) 55%,
+    rgba(13, 13, 13, 0.72) 100%
   );
-}
-/* moldura hairline: o "corte" do telão, aparece junto do recuo */
-.hero__screen-frame {
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(255, 255, 255, 0.22);
   pointer-events: none;
 }
 
-/* ===== capítulos do scrollytelling ===== */
-.hero__chapter {
+.hero__h1 {
   position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-/* O wrapper continua transparente ao toque (`inset: 0` cobriria a tela
-   inteira) e o link do capítulo é quem recebe. Quem tira o capítulo
-   apagado do caminho do dedo e do Tab é o `visibility` que o Hero.jsx
-   liga à mesma rampa da opacidade — o porquê está lá, no useChapter. */
-.hero__chapter a {
-  pointer-events: auto;
-}
-
-/* palavras: sólida em cima, outline embaixo (ou o inverso), sempre
-   mordendo a borda do telão pra tipografia viver meio no filme, meio
-   no radar. */
-.hero__word {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  line-height: 0.92;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
   white-space: nowrap;
 }
-.hero__word-solid {
-  color: #fff;
-}
-.hero__word-solid--red {
-  color: #ff0000;
-}
-.hero__word-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
-}
 
-/* cap 1: BRILHO DE VERDADE à esquerda, card Trevo Royal à direita */
-.hero__chapter--brilho .hero__word--left {
+/* ações no canto inferior esquerdo, acima da faixa da marca */
+.hero__base {
   position: absolute;
-  left: 4vw;
-  bottom: 12vh;
-  font-size: clamp(40px, 6.4vw, 118px);
-  text-align: left;
-}
-.hero__chapter--brilho .hero__card--right {
-  position: absolute;
-  right: 4.5vw;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* cap 2: PRA QUEM ENCARA gigante, centralizado sobre os olhos */
-.hero__chapter--encara .hero__word--center {
-  position: absolute;
-  left: 50%;
-  top: 56%;
-  transform: translateX(-50%);
-  align-items: center;
-  font-size: clamp(52px, 8.6vw, 160px);
-}
-
-/* cap 3: PESO NO PEITO à direita, card Trevo Gold + CTA à esquerda */
-.hero__chapter--peso .hero__word--right {
-  position: absolute;
-  right: 4vw;
-  bottom: 12vh;
-  align-items: flex-end;
-  font-size: clamp(40px, 6.4vw, 118px);
-  text-align: right;
-}
-.hero__chapter-left {
-  position: absolute;
-  left: 4.5vw;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
-}
-.hero__cta--chapter {
-  margin-top: 0;
-}
-
-/* card de peça: foto real com alfa sobre chapa escura + hairline */
-.hero__card {
-  display: flex;
-  flex-direction: column;
-  width: clamp(190px, 16vw, 250px);
-  padding: 14px 14px 16px;
-  background: rgba(10, 10, 10, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(4px);
-  text-decoration: none;
-  color: #fff;
-}
-.hero__card-photo {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  margin-bottom: 12px;
-  background: #0d0d0d;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-.hero__card-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 8%;
-  box-sizing: border-box;
-}
-.hero__card-cat {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-}
-.hero__card-title {
-  margin-top: 4px;
-  font-family: var(--font-nav);
-  font-weight: 600;
-  font-size: 17px;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-}
-.hero__card-row {
-  margin-top: 10px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-}
-.hero__card-price {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
-}
-.hero__card-go {
-  font-family: var(--font-nav);
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: #ff0000;
-  border-bottom: 1px solid #ff0000;
-  padding-bottom: 1px;
-}
-
-/* O papel rasgado real (z1): imagem quadrada com furo de alfa real.
-   O wrap corta o excesso; o papel é posicionado de modo que o CENTRO DO
-   FURO (51.8% x, 55.2% y da imagem) caia no centro da viewport, e escala
-   a partir desse ponto (transform-origin idêntico). --paper-size garante
-   cobertura da viewport na escala 1. */
-.hero__paper-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  pointer-events: none;
-}
-.hero__paper {
-  /* imagem SEM padding (textura real até a borda), esticada pra proporção
-     da viewport — o papel cobre a tela inteira e o CENTRO DO FURO
-     (51.8% x, 55.3% y da imagem) cai no centro exato da viewport. A
-     distorção não aparece na textura de papel e o furo segue orgânico. */
-  position: absolute;
-  width: 104vw;
-  height: 112vh;
-  left: calc(50% - 104vw * 0.518);
-  /* 0.49 em vez de 0.553 (centro exato): folha ~7vh mais baixa (pedidos:
-     "abaixa só um pouco mais a folha" 2x), furo abaixo do centro */
-  top: calc(50% - 112vh * 0.49);
-  transform-origin: 51.8% 55.3%;
-  will-change: transform;
-}
-.hero__paper-img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: fill;
-  user-select: none;
-}
-
-/* pilha de texto centralizada sobre o furo (z2): eyebrow, duas linhas de
-   título e CTA, tudo no eixo central da tela. As metades voam em direções
-   opostas quando o rasgo abre. */
-.hero__stack {
-  position: absolute;
-  inset: 0;
+  left: 46px; /* margem de conteúdo da grade do Figma (hairline x=46) */
+  bottom: calc(46px + 40px);
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  pointer-events: none;
-}
-.hero__stack a {
-  pointer-events: auto;
-}
-.hero__stack-half {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  will-change: transform;
-}
-.hero__stack .hero__eyebrow {
-  margin-bottom: 14px;
-}
-.hero__stack .hero__giant {
-  font-size: clamp(44px, calc(100vw / 11), 132px);
-  text-shadow: 0 4px 34px rgba(0, 0, 0, 0.55);
-}
-.hero__stack .hero__cta {
-  margin-top: 26px;
 }
 
+.hero__acoes {
+  display: flex;
+  gap: 12px;
+}
+/* Figma: o texto do CTA é sublinhado */
+.hero__cta {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+}
+/* Faixa do rodapé do hero: tira preta colada na base, fio no topo, texto
+   de UI pequeno. Informação, não decoração. */
 .hero__marquee-wrap {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 2.5vh;
+  bottom: 0;
   z-index: 2;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  background: #080808;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
   pointer-events: none;
 }
-
-.hero__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-}
-
-.hero__giant {
-  margin: 0;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  font-size: clamp(48px, calc(100vw / 10), 150px);
-  line-height: 0.94;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: #fff;
-}
-
-.hero__cta {
-  margin-top: 22px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  color: #0a0a0a;
-  padding: 12px 24px;
-  border-radius: 999px;
-  /* CTA do site: voz de UI, peso 700, letter-spacing 0.04em, uppercase.
-     Só a família/peso/espaçamento são padrão — a geometria (padding,
-     raio, tamanho) é a desta posição e não muda. */
-  font-family: var(--font-ui);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  font-weight: 700;
-  white-space: nowrap;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-}
-.hero__cta span {
-  color: #ff0000;
-  font-weight: 700;
-}
-
 .hero__marquee {
   width: 100%;
-  margin-top: 32px;
 }
 .hero__marquee-text {
-  display: inline-block;
-  font-family: var(--font-nav);
-  font-weight: 500;
-  font-size: clamp(18px, 2vw, 34px);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.86);
   white-space: nowrap;
 }
+.hero__marquee-marca {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  margin: 0 28px;
+  font-size: 15px;
+  color: #fff;
+}
+/* cada item abre com o quadrado vermelho (sem raio, como o resto) */
+.hero__marquee-item {
+  display: inline-flex;
+  align-items: center;
+}
+.hero__marquee-item::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  margin: 0 28px;
+  background: var(--gn-red);
+}
 
-/* ================= CELULAR / RETRATO =================
-   O filme é a cereja do site e aqui ele TOMA A TELA INTEIRA.
-
-   Antes: o telão mantinha aspect-ratio 16/9 com min-width 94vw. Num
-   aparelho de 390x844 isso dava 366x206px — uma tarja no meio da tela,
-   com preto sobrando em cima e embaixo. O recuo (112vw -> 70vw), que no
-   desktop é o gesto de "afastar a câmera pra mostrar o enquadramento",
-   em retrato só encolhia o filme sem motivo.
-
-   Agora: 100vw x 100dvh com object-fit:cover. Corta as laterais do 16:9,
-   que é o preço certo — em retrato, ver a cena grande vale mais do que
-   ver o enquadramento inteiro. O recuo é desligado no JS
-   (useTelaEstreita), porque a largura é animada inline e venceria
-   qualquer regra daqui.
-   ==================================================== */
 @media (max-width: 860px) {
-  .hero__giant {
-    font-size: calc(100vw / 7);
+  .hero__base {
+    left: 5vw;
+    right: 5vw;
+    bottom: calc(46px + 28px);
+  }
+  .hero__acoes {
+    flex-direction: column;
   }
   .hero__marquee-text {
-    font-size: 16px;
-  }
-
-  .hero__screen {
-    /* a largura vem inline (100vw); aqui a altura e o fim do 16:9 */
-    aspect-ratio: auto;
-    height: 100dvh;
-    min-width: 0;
-  }
-
-  /* a moldura hairline era o "corte" do telão recuado — em tela cheia
-     ela vira só um risco na borda do aparelho */
-  .hero__screen-frame {
-    display: none;
-  }
-
-  /* véu mais forte: em tela cheia a tipografia branca cai sobre a cena
-     inteira, não sobre um quadro escuro cercado de fundo */
-  .hero__joia-veil {
-    background: linear-gradient(
-      180deg,
-      rgba(13, 13, 13, 0.62) 0%,
-      rgba(13, 13, 13, 0.2) 34%,
-      rgba(13, 13, 13, 0.28) 62%,
-      rgba(13, 13, 13, 0.8) 100%
-    );
-  }
-
-  /* Capítulos: a palavra sobe pro alto e o card desce pro rodapé — os
-     dois usam a largura toda da tela, sem se sobrepor no meio (onde
-     está o assunto do filme). */
-  .hero__chapter--brilho .hero__word--left {
-    left: 5vw;
-    right: 5vw;
-    bottom: auto;
-    top: 12vh;
-    font-size: calc(100vw / 7.6);
-    white-space: normal;
-  }
-  /* 6vh (50px em 844) punha o card e o CTA debaixo do botão de som, que
-     é fixo no canto e ocupa os últimos 58px da tela: medido em 390x844,
-     o botão cobria o canto direito do "VER PEÇAS" do capítulo 3 e o
-     "VER PEÇA" do card do capítulo 1. O piso de 74px tira a pilha de
-     baixo dele, e o svh mantém o ritmo em aparelho alto. */
-  .hero__chapter--brilho .hero__card--right {
-    right: 5vw;
-    left: 5vw;
-    top: auto;
-    bottom: max(74px, 8svh);
-    transform: none;
-  }
-  .hero__chapter--encara .hero__word--center {
-    left: 5vw;
-    right: 5vw;
-    transform: none;
-    top: 50%;
-    margin-top: -12vh;
-    align-items: center;
-    text-align: center;
-    font-size: calc(100vw / 6.4);
-    white-space: normal;
-  }
-  .hero__chapter--peso .hero__word--right {
-    right: 5vw;
-    left: 5vw;
-    bottom: auto;
-    top: 12vh;
-    font-size: calc(100vw / 7.6);
-    white-space: normal;
-  }
-  .hero__chapter-left {
-    left: 5vw;
-    right: 5vw;
-    top: auto;
-    bottom: max(74px, 8svh);
-    transform: none;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  /* CARD EM DUAS COLUNAS: foto à esquerda, informação à direita.
-     Empilhado (foto em cima de tudo) ele comia 300px de altura e cobria
-     o filme; deitado ocupa ~110px e ainda sobra cena pra ver. */
-  .hero__card {
-    width: auto;
-    display: grid;
-    grid-template-columns: 92px 1fr;
-    grid-template-areas:
-      "foto cat"
-      "foto titulo"
-      "foto preco";
-    align-items: center;
-    column-gap: 14px;
-    row-gap: 2px;
-    padding: 12px;
-  }
-  .hero__card-photo {
-    grid-area: foto;
-    margin-bottom: 0;
-    align-self: stretch;
-  }
-  .hero__card-cat {
-    grid-area: cat;
-  }
-  .hero__card-title {
-    grid-area: titulo;
-    margin-top: 0;
-    font-size: 19px;
-  }
-  .hero__card-row {
-    grid-area: preco;
-    margin-top: 4px;
-  }
-  .hero__card-price {
-    font-size: 15px;
-  }
-
-  /* o CTA do capítulo 3 ocupa a largura, abaixo do card */
-  .hero__cta--chapter {
-    justify-content: center;
-  }
-}
-
-/* aparelho pequeno: só aperta os números, a composição é a mesma */
-@media (max-width: 400px) {
-  .hero__card {
-    grid-template-columns: 78px 1fr;
-    padding: 10px;
-  }
-  .hero__card-title {
-    font-size: 17px;
-  }
-}
-
-/* ---------- ÁREA DE TOQUE DA CAPA ----------
-   Medido em 390x844: os dois "VER PEÇAS" (o da capa e o do capítulo 3)
-   davam 41px de altura. São os dois únicos caminhos da capa para a
-   vitrine, e ficam sobre um filme em movimento, onde errar o alvo é
-   ainda mais fácil. O corpo do texto não muda. */
-@media (pointer: coarse) {
-  .hero__cta {
-    min-height: 44px;
+    font-size: 11px;
   }
 }

@@ -1,163 +1,143 @@
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./OutrosProdutos.css";
 import { RevealTitle } from "./Reveal";
 import { useCatalog } from "../CatalogContext";
-import PecaCard from "./PecaCard";
-import { useLarguraAte } from "../lib/useLarguraAte";
+import { COM_CARD, fotoCard } from "./CardJoia";
 
-// "CONFIRA TAMBÉM" — node 27:176 do Figma.
+// "CONFIRA TAMBÉM" (Figma 27:176) como VITRINE DE LOJA: um bloco contido,
+// num fundo um tom acima do preto, SEM fios (moldura em tudo lia como
+// layout genérico). A hierarquia vem de espaço, escala e tipografia: 3
+// peças por vez, grandes, nome e preço na mesma linha, material embaixo.
+// Cada peça é apresentada como produto: foto, categoria, nome, materiais e
+// preço, com a informação EMBAIXO da foto (o card dos Lançamentos põe por
+// cima; aqui o papel é comparar e comprar).
 //
-// Duas linhas, com papéis diferentes:
-//
-//   LINHA 1 — três peças fixas, na grade, com a mesma malha de
-//   Lançamentos. É a vitrine: o que a loja quer mostrar primeiro pra
-//   quem chegou ao fim da página.
-//
-//   LINHA 2 — trilho que ROLA na horizontal, com o resto da curadoria.
-//   Existe porque a seção é o último empurrão antes de a pessoa fechar a
-//   aba: em vez de três opções e um beco sem saída, ela varre mais peças
-//   sem sair da home nem carregar outra página. Rolar de lado é o gesto
-//   que essa pessoa já faz o dia inteiro no feed.
-//
-// QUEM APARECE aqui é escolhido no painel, não no código. Antes era uma
-// lista de slugs escrita neste arquivo — trocar a curadoria exigia
-// deploy. Hoje é a marcação `confira` de cada produto, com campo próprio
-// (e não o mesmo `destaque` de Lançamentos): as duas seções dividem a
-// mesma home, e um campo só faria a peça marcada aparecer duas vezes na
-// mesma rolagem.
-// QUANTAS PEÇAS A GRADE COMPORTA — e por quê.
-//
-// Depende do LAYOUT, e o layout muda com a tela:
-//   desktop → 3 colunas, 1 fileira = 3 peças
-//   celular → 2 colunas, 2 fileiras = 4 peças
-//
-// Com 3 peças fixas numa grade de 2 colunas (o que valia até aqui), a
-// terceira ficava sozinha na fileira de baixo e ao lado dela sobrava um
-// retângulo VAZIO com o fio da malha desenhado em volta: lido na tela,
-// parece card que não carregou. Medido em 390x844: grade de 2x195px com
-// a célula da direita da segunda fileira em branco.
-//
-// É a mesma regra que a faixa de Lançamentos já segue (ver Curtain.jsx):
-// sempre múltiplo do número de colunas. O 640 é o mesmo ponto em que o
-// CSS troca as colunas, e os dois têm que continuar iguais.
-const NA_GRADE_DESKTOP = 3;
-const NA_GRADE_CELULAR = 4;
+// Tudo o que aparece vem do catálogo: categoria, materiais, preço, preço
+// cheio (só existe em promoção cadastrada) e estoque. Nada inventado.
+// Só entram peças com foto própria (COM_CARD); as marcadas como "confira"
+// no painel vêm primeiro.
+const ORDEM = [
+  "pingente-cruz-cravejada",
+  "anel-cruz-royal",
+  "corrente-sob-medida",
+  "trevo-gold",
+  "trevo-rose",
+  "trevo-royal",
+];
+
+const emReais = (txt) => Number(String(txt || "").replace(/[^\d,]/g, "").replace(",", ".")) || 0;
+
+function PecaVitrine({ p }) {
+  const cheio = emReais(p.priceFull);
+  const vigente = emReais(p.price);
+  const desconto = cheio > vigente && vigente > 0 ? Math.round((1 - vigente / cheio) * 100) : 0;
+  const ultimas = typeof p.estoque === "number" && p.estoque > 0 && p.estoque <= 5;
+  return (
+    <article className="vitrine__peca">
+      <Link className="vitrine__link" to={`/produto/${p.slug}`}>
+        <span className="vitrine__foto">
+          <img src={fotoCard(p.slug)} alt={p.title} loading="lazy" decoding="async" />
+          {desconto > 0 && <span className="vitrine__selo">-{desconto}%</span>}
+        </span>
+        <span className="vitrine__linha">
+          <span className="vitrine__nome">{p.title}</span>
+          <span className="vitrine__preco">{p.price}</span>
+        </span>
+        <span className="vitrine__linha vitrine__linha--fina">
+          <span>{p.materials?.[0] || p.category}</span>
+          {p.priceFull ? <s>{p.priceFull}</s> : ultimas ? <em>Últimas unidades</em> : null}
+        </span>
+      </Link>
+    </article>
+  );
+}
 
 export default function OutrosProdutos() {
   const { produtos, confiras } = useCatalog();
-  const ehCelular = useLarguraAte(640);
-  const naGradeCabem = ehCelular ? NA_GRADE_CELULAR : NA_GRADE_DESKTOP;
   const trilho = useRef(null);
   const [posicao, setPosicao] = useState(0);
+  const [atual, setAtual] = useState(1);
 
-  // Ordem: primeiro quem o dono marcou, depois o resto do catálogo pra
-  // completar. Assim a seção nunca fica com a malha quebrada, mesmo que
-  // ninguém tenha marcado nada no painel.
   const vistos = new Set();
-  const fila = [...confiras, ...produtos].filter((p) =>
-    vistos.has(p.slug) ? false : vistos.add(p.slug)
-  );
+  const pecas = [...confiras.map((p) => p.slug), ...ORDEM]
+    .filter((s) => COM_CARD.includes(s) && (vistos.has(s) ? false : vistos.add(s)))
+    .map((s) => produtos.find((p) => p.slug === s))
+    .filter(Boolean);
 
-  const naGrade = fila.slice(0, naGradeCabem);
-  const noTrilho = fila.slice(naGradeCabem);
+  if (pecas.length < 2) return null;
 
-  // Catálogo pequeno demais pra fechar a fileira: melhor não mostrar a
-  // seção do que mostrar uma malha com buraco.
-  if (naGrade.length < naGradeCabem) return null;
-
+  // anda de peça em peça: a vitrine para sempre com peças inteiras
   function rolar(direcao) {
     const el = trilho.current;
     if (!el) return;
-    // rola de card em card, não uma distância fixa: assim o trilho para
-    // sempre com uma peça inteira na borda, nunca cortada ao meio
-    const passo = el.querySelector(".peca-card")?.getBoundingClientRect().width || 280;
-    el.scrollBy({ left: passo * direcao * 2, behavior: "smooth" });
+    const passo = el.querySelector(".vitrine__peca")?.getBoundingClientRect().width || 300;
+    el.scrollBy({ left: passo * direcao, behavior: "smooth" });
   }
 
   function aoRolar() {
     const el = trilho.current;
     if (!el) return;
     const max = el.scrollWidth - el.clientWidth;
-    setPosicao(max <= 0 ? 0 : el.scrollLeft / max);
+    setPosicao(max <= 0 ? 1 : el.scrollLeft / max);
+    const passo = el.querySelector(".vitrine__peca")?.getBoundingClientRect().width || 1;
+    setAtual(Math.min(Math.round(el.scrollLeft / (passo + 24)) + 1, el.children.length));
   }
 
   return (
-    <section className="outros-produtos">
-      <div className="outros-produtos__topo">
-        <div className="outros-produtos__title">
-          <RevealTitle as="h2">
-            <span className="tw-solid">CONFIRA</span>
-            <span className="tw-outline">TAMBÉM</span>
+    <section className="confira">
+      <div className="vitrine">
+        <div className="vitrine__cabeca">
+          <RevealTitle as="h2" className="confira__titulo">
+            <span className="tw-solid">Confira</span>
+            <span className="tw-outline">também</span>
           </RevealTitle>
+
+          <div className="vitrine__controle">
+            <span className="vitrine__conta">
+              {String(atual).padStart(2, "0")} / {String(pecas.length).padStart(2, "0")}
+            </span>
+            {/* atalho de mouse; a vitrine rola por arrasto, roda e teclado */}
+            <button
+              type="button"
+              className="vitrine__seta"
+              onClick={() => rolar(-1)}
+              aria-label="Ver peças anteriores"
+              tabIndex={-1}
+              disabled={posicao <= 0.01}
+            >
+              &#8592;
+            </button>
+            <button
+              type="button"
+              className="vitrine__seta"
+              onClick={() => rolar(1)}
+              aria-label="Ver mais peças"
+              tabIndex={-1}
+              disabled={posicao >= 0.99}
+            >
+              &#8594;
+            </button>
+          </div>
         </div>
 
-        <div className="outros-produtos__grid">
-          {naGrade.map((p, i) => (
-            <PecaCard key={p.slug} p={p} i={i} className="outros-produtos__card" />
+        <div
+          className="vitrine__trilho"
+          ref={trilho}
+          onScroll={aoRolar}
+          tabIndex={0}
+          role="region"
+          aria-label="Peças da vitrine, role para o lado"
+        >
+          {pecas.map((p) => (
+            <PecaVitrine key={p.slug} p={p} />
           ))}
         </div>
+
+        <Link className="btn-texto vitrine__todas" to="/colecao/g-shop">
+          Ver todas as peças
+        </Link>
       </div>
-
-      {noTrilho.length > 0 && (
-        <div className="outros-produtos__mais">
-          <div className="outros-produtos__mais-cabeca">
-            <span className="outros-produtos__mais-rotulo">
-              Mais peças <strong>{noTrilho.length}</strong>
-            </span>
-
-            {/* As setas são um atalho pra mouse; o trilho rola por
-                arrasto, roda e teclado sem elas. Por isso ficam de fora
-                da ordem de tabulação do teclado — quem navega por Tab já
-                alcança os produtos direto. */}
-            <div className="outros-produtos__setas">
-              <button
-                type="button"
-                className="outros-produtos__seta"
-                onClick={() => rolar(-1)}
-                aria-label="Ver peças anteriores"
-                tabIndex={-1}
-                disabled={posicao <= 0.01}
-              >
-                &#8592;
-              </button>
-              <button
-                type="button"
-                className="outros-produtos__seta"
-                onClick={() => rolar(1)}
-                aria-label="Ver mais peças"
-                tabIndex={-1}
-                disabled={posicao >= 0.99}
-              >
-                &#8594;
-              </button>
-            </div>
-          </div>
-
-          <div
-            className="outros-produtos__trilho"
-            ref={trilho}
-            onScroll={aoRolar}
-            tabIndex={0}
-            role="region"
-            aria-label="Mais peças, role para o lado"
-          >
-            {noTrilho.map((p, i) => (
-              <PecaCard
-                key={p.slug}
-                p={p}
-                i={Math.min(i, 5)}
-                className="outros-produtos__item"
-              />
-            ))}
-          </div>
-
-          {/* Barra de progresso: numa lista que rola de lado, sem ela não
-              há como saber que existe mais coisa nem quanto falta. */}
-          <div className="outros-produtos__barra" aria-hidden="true">
-            <span style={{ transform: `scaleX(${Math.max(posicao, 0.06)})` }} />
-          </div>
-        </div>
-      )}
     </section>
   );
 }

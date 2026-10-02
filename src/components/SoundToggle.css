@@ -4,14 +4,14 @@
 .sound-toggle {
   position: fixed;
   right: 22px;
-  bottom: 22px;
+  bottom: 62px; /* acima da faixa de 46px do rodapé do hero */
   z-index: 60;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 20px;
   height: 54px;
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(8, 8, 8, 0.9);
   border: 1.5px solid rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(6px);
@@ -86,7 +86,7 @@
 @media (max-width: 800px) {
   .sound-toggle {
     right: 14px;
-    bottom: 14px;
+    bottom: 56px;
     height: 48px;
     padding: 0 16px;
   }
@@ -102,7 +102,7 @@
 @media (max-width: 640px) {
   .sound-toggle {
     right: 14px;
-    bottom: 14px;
+    bottom: 56px;
     width: 44px;
     height: 44px;
     padding: 0;

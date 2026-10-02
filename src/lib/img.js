@@ -13,5 +13,7 @@
 export function fotoProduto(img) {
   if (!img) return "";
   if (/^https?:\/\//.test(img) || img.startsWith("/")) return img;
-  return `/assets/products/${img}`;
+  // As fotos locais foram otimizadas para WebP (mesmo nome); o cadastro
+  // continua dizendo .png/.jpg, então a troca acontece aqui.
+  return `/assets/products/${img.replace(/\.(png|jpe?g)$/i, ".webp")}`;
 }

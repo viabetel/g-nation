@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
 import Wordmark from "./Wordmark";
+import { INSTAGRAM_URL, linkWhatsapp, useLoja } from "../lib/loja";
 import "./Footer.css";
+
+const PAGAMENTOS = [
+  ["pix", "Pix"],
+  ["visa", "Visa"],
+  ["mastercard", "Mastercard"],
+  ["elo", "Elo"],
+  ["amex", "American Express"],
+  ["hipercard", "Hipercard"],
+  ["boleto", "Boleto"],
+];
 
 // Porte fiel do node 27:196 "footer-g-nation" da HOME do Figma
 // (TXte9vygIeSP76UVjnbwLT), via get_design_context + download_assets:
@@ -11,6 +22,7 @@ import "./Footer.css";
 // O footer que estava no projeto (About/Works, Juiz de Fora, TikTok,
 // "2026 © G-Nation") não existia no arquivo — foi substituído por este.
 export default function Footer() {
+  const loja = useLoja();
   return (
     <footer className="footer">
       <div className="footer__accent" />
@@ -41,21 +53,23 @@ export default function Footer() {
             <div className="footer__social-row">
               <a
                 className="footer__social"
-                href="https://instagram.com/gnation"
+                href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener"
               >
                 <img src="/assets/footer/instagram.svg" alt="" aria-hidden="true" />
                 Instagram
               </a>
-              <a
-                className="footer__social"
-                href="https://wa.me/5532988887777"
-                target="_blank"
-                rel="noopener"
-              >
-                WhatsApp
-              </a>
+              {loja.whatsapp && (
+                <a
+                  className="footer__social"
+                  href={linkWhatsapp(loja.whatsapp)}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  WhatsApp
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -76,7 +90,7 @@ export default function Footer() {
           <div className="footer__info">
             <div className="footer__info-block">
               <p className="footer__info-label">Email</p>
-              <p className="footer__info-value">contato@gnation.com.br</p>
+              <p className="footer__info-value">{loja.email}</p>
             </div>
             <div className="footer__info-block">
               <p className="footer__info-label">Horário</p>
@@ -84,17 +98,25 @@ export default function Footer() {
             </div>
             <div className="footer__info-block">
               <p className="footer__info-label">Pagamento</p>
-              {/* PAGAMENTO — mesma história: `pay-1.svg` também é o
-                  "circle-x" placeholder, e aparecia duas vezes. Agora diz
-                  os meios que o checkout realmente oferece, escritos.
-                  Bandeira de cartão a gente não desenha: são marcas de
-                  terceiros e o site não sabe quais o gateway vai aceitar
-                  até ele ser escolhido. */}
-              <div className="footer__pay-row">
-                <span className="footer__pay">Pix</span>
-                <span className="footer__pay">Cartão</span>
-                <span className="footer__pay">Boleto</span>
-              </div>
+              {/* PAGAMENTO — logos oficiais coloridas em formato cartão
+                  (780x500, cantos retos). Bandeiras: set flat do
+                  aaronfagan/svg-credit-card-payment-icons; Pix: símbolo
+                  oficial na cor #32BCAD; Boleto não tem logo oficial,
+                  então é o código de barras padrão. */}
+              <ul className="footer__pay-row">
+                {PAGAMENTOS.map(([arquivo, nome]) => (
+                  <li key={arquivo} className="footer__pay">
+                    <img
+                      src={`/assets/footer/pagamento/${arquivo}.svg`}
+                      alt={nome}
+                      title={nome}
+                      width="39"
+                      height="25"
+                      loading="lazy"
+                    />
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -105,9 +127,9 @@ export default function Footer() {
       <div className="footer__bottom">
         <p>© {new Date().getFullYear()} <Wordmark flat /> URBAN JEWELRY. TODOS OS DIREITOS RESERVADOS.</p>
         <div className="footer__legal">
-          <span>Políticas de Privacidade</span>
+          <Link to="/politica-de-privacidade">Política de Privacidade</Link>
           <span>Termos de Uso</span>
-          <span>Trocas e Devoluções</span>
+          <Link to="/trocas-e-devolucoes">Trocas e Devoluções</Link>
         </div>
       </div>
     </footer>

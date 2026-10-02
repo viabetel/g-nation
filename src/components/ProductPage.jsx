@@ -6,6 +6,7 @@ import Wordmark from "./Wordmark";
 import Navbar from "./Navbar";
 import { useCart } from "../CartContext";
 import "./ProductPage.css";
+import { INSTAGRAM_URL, fraseFrete, useLoja } from "../lib/loja";
 import { fotoProduto } from "../lib/img";
 
 // Motion da página (framer-motion): foto entra com fade+scale suave, a
@@ -35,6 +36,7 @@ const itemVariants = {
 // já usado no resto do projeto (var(--font-mono), JetBrains Mono 700).
 // Archivo Black e Open Sauce One são fontes reais do Google Fonts.
 export default function ProductPage() {
+  const loja = useLoja();
   const { slug } = useParams();
   const { produtos, buscarPorSlug } = useCatalog();
   const product = buscarPorSlug(slug);
@@ -166,9 +168,44 @@ export default function ProductPage() {
           <motion.div className="pp__shipping" variants={itemVariants}>
             <img src="/assets/produto/icon-truck.svg" alt="" />
             <div>
-              <strong>FRETE GRÁTIS PARA TODO BRASIL</strong>
-              <span>Entrega expressa entre 2 e 5 dias úteis.</span>
+              <strong>{fraseFrete(loja)}</strong>
+              <span>Entrega em {loja.prazo}.</span>
             </div>
+          </motion.div>
+
+          {/* Detalhes e pagamento: só dados do catálogo e do site (estoque
+              real, materiais e tamanhos cadastrados, formas de pagamento do
+              rodapé). É o que rola enquanto a foto fica parada. */}
+          <motion.div className="pp__detalhes" variants={itemVariants}>
+            <h3>DETALHES</h3>
+            <dl>
+              <div>
+                <dt>Categoria</dt>
+                <dd>{product.category}</dd>
+              </div>
+              <div>
+                <dt>Materiais</dt>
+                <dd>{product.materials.join(" / ")}</dd>
+              </div>
+              {product.sizes.length > 0 && (
+                <div>
+                  <dt>Tamanhos</dt>
+                  <dd>{product.sizes.join(" / ")}</dd>
+                </div>
+              )}
+              {typeof product.estoque === "number" && (
+                <div>
+                  <dt>Disponibilidade</dt>
+                  <dd className={product.estoque > 0 && product.estoque <= 5 ? "is-ultimas" : ""}>
+                    {product.estoque <= 0 ? "Esgotado" : product.estoque <= 5 ? "Últimas unidades" : "Em estoque"}
+                  </dd>
+                </div>
+              )}
+              <div>
+                <dt>Pagamento</dt>
+                <dd>Pix, cartão ou boleto</dd>
+              </div>
+            </dl>
           </motion.div>
         </motion.div>
       </div>
@@ -222,7 +259,7 @@ export default function ProductPage() {
             <div className="pp__footer-socials">
               <span>SIGA A CULTURA</span>
               <div className="pp__footer-social-icons">
-                <img src="/assets/produto/icon-social-1.svg" alt="Instagram" />
+                <a href={INSTAGRAM_URL} target="_blank" rel="noopener" aria-label="Instagram da G-Nation"><img src="/assets/produto/icon-social-1.svg" alt="" /></a>
                 <img src="/assets/produto/icon-social-2.svg" alt="TikTok" />
               </div>
             </div>
@@ -239,7 +276,7 @@ export default function ProductPage() {
             <span>ATENDIMENTO</span>
             <div>
               <p className="pp__footer-contact-label">Email</p>
-              <p className="pp__footer-contact-value">contato@gnation.com.br</p>
+              <p className="pp__footer-contact-value">{loja.email}</p>
             </div>
             <div>
               <p className="pp__footer-contact-label">Horário</p>
@@ -249,10 +286,11 @@ export default function ProductPage() {
         </div>
         <div className="pp__footer-divider" />
         <div className="pp__footer-bottom">
-          <p>© 2024 <Wordmark flat /> URBAN JEWELRY. TODOS OS DIREITOS RESERVADOS.</p>
+          <p>© 2026 <Wordmark flat /> URBAN JEWELRY. TODOS OS DIREITOS RESERVADOS.</p>
           <div className="pp__footer-legal">
-            <span>Políticas de Privacidade</span>
+            <Link to="/politica-de-privacidade">Política de Privacidade</Link>
             <span>Termos de Uso</span>
+            <Link to="/trocas-e-devolucoes">Trocas e Devoluções</Link>
           </div>
         </div>
       </footer>

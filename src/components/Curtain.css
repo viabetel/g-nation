@@ -1,18 +1,17 @@
+/* CATEGORIA (Figma 27:64): duas portas de foto, G-Shop e G-Customizadas,
+   que sobem por cima do hero preso (cortina) e depois se abrem.
+   O que aparece quando elas se abrem é a seção LANÇAMENTOS, que começa
+   embaixo delas (margem negativa no Lancamentos.css). Por isso:
+   - o fundo aqui é transparente: atrás das portas está a seção seguinte;
+   - a altura é uma tela + o curso das portas (700px, --porta-curso), e o
+     Curtain.jsx anima as portas exatamente nesse curso. */
 .curtain {
-  /* z-index 2 + margin-top negativo = a Categoria SOBE POR CIMA do hero
-     (fase C): escorrega sobre o hero ainda pinado (z1), cobrindo o vídeo
-     como uma folha. O -100vh a puxa pra cima dos últimos 100vh do hero
-     (220vh) — casa com o fim do dwell. Só posicionamento; o conteúdo
-     (portas G-Shop/G-Customizadas) fica intacto. */
   position: relative;
   z-index: 2;
-  margin-top: -80vh;
   width: 100%;
-  /* Reduzida de 3400px: era mais da metade de scroll morto (auditado —
-     ver comentário no Curtain.jsx). 2000px dá o mesmo efeito com um
-     "dwell" curto no fim em vez de uma trava longa parada. */
-  height: 2000px;
-  background: var(--zinc-200);
+  height: calc(100vh + 700px);
+  background: transparent;
+  pointer-events: none;
 }
 
 .curtain__pin {
@@ -35,205 +34,17 @@
   flex: 1;
   height: 100%;
   overflow: hidden;
+  pointer-events: auto;
+  /* base opaca: o revezamento de fotos é por opacidade, e sem isto a seção
+     de baixo aparecia através da porta no meio de cada troca */
+  background: #080808;
 }
 
 .curtain__slice-inner {
   height: 100%;
 }
 
-.curtain__white-under {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #000;
-  z-index: -1;
-  overflow: hidden;
-}
-
-/* Porta o design real da seção "Featured Works" do template espelho
-   (grateful-popup-643840.framer.app, WorksSection nodeId JQTMXIAPF):
-   fundo preto sólido (rgb(0,0,0), confirmado no XML do Framer — sem
-   textura), heading + parágrafo centralizados, grid 2x2 de cards
-   full-bleed, CTA ghost pill embaixo. Revelado atrás das fotos quando a
-   cortina termina de abrir. */
-.curtain__lancamentos {
-  width: 100%;
-  max-width: 1040px;
-  /* padding lateral maior pra grade não ficar grudada nas bordas (pedido);
-     vertical enxuto pra caber no pin sem scroll interno. */
-  padding: 14px 64px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.curtain__lancamentos.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.curtain__lanc-head {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  text-align: center;
-}
-
-/* HeadingTitle component, text style /H2: JetBrains Mono 700, uppercase.
-   Escalado pra baixo em relação ao original (72px) já que o container
-   também encolheu (max-width 1040px) — mantém a proporção com o grid. */
-.curtain__lanc-head h2 {
-  font-family: var(--font-mono);
-  font-weight: 800;
-  font-size: clamp(20px, 3vw, 32px);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  color: var(--zinc-200);
-}
-
-/* text style /Body: Poppins regular 16px, line-height 1.8 — copy enxuta
-   pra caber numa linha só e sobrar altura pra foto. */
-.curtain__lanc-head p {
-  max-width: 620px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  line-height: 1.4;
-  color: rgba(228, 228, 231, 0.65);
-}
-
-/* Linhas divisórias: peça real do "Our Services" do template espelho
-   (grateful-popup-643840.framer.app) — conferido no DOM renderizado, cada
-   linha de serviço tem border-top de 2px, cor rgb(228,228,231) (zinc-200),
-   largura cheia. Aplicada aqui como grade (linha externa em cima + cruz no
-   meio) inspirada na estrutura do node 27:77 do Figma, mas com o traço
-   exato do template em vez das hairlines pretas que eu tinha usado antes. */
-/* Grade fechada como quadrado (pedido): borda 2px em TODA a volta +
-   as linhas internas (cruz) via border dos cards. */
-/* O VISUAL do card vive em PecaCard.css (compartilhado com a seção
-   "Confira também"). Aqui fica só a MALHA: a grade e os fios entre as
-   células. Antes o card era estilizado aqui, e por isso as duas seções
-   da home divergiram. */
-.curtain__lanc-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 2px solid rgb(228, 228, 231);
-}
-
-/* linha vertical interna: só entre colunas (não na última de cada linha) */
-.curtain__lanc-card:not(:nth-child(3n)) {
-  border-right: 2px solid rgb(228, 228, 231);
-}
-
-/* linha horizontal interna: entre a 1ª e a 2ª fileira */
-.curtain__lanc-card:nth-child(n + 4) {
-  border-top: 2px solid rgb(228, 228, 231);
-}
-
-/* Havia aqui um `.curtain__lanc-card:hover` SEM BLOCO, sobra de uma
-   edição abandonada. Não era enfeite: um seletor sem chaves não é
-   descartado pelo navegador, ele se junta ao seletor seguinte. O que o
-   CSS dizia de verdade era
-
-     .curtain__lanc-card:hover .curtain__lanc-more { ... }
-
-   e como o "Ver mais" não vive dentro de card nenhum, a regra INTEIRA do
-   botão (borda, raio 22, fundo, cor, caixa alta, tracking) nunca valia,
-   com ou sem hover. O que sobrava dele eram as duas regras soltas mais
-   abaixo, então o CTA da seção de Lançamentos aparecia como texto puro,
-   sem a pílula ghost que o desenho pede. Conferido por print em 390x844
-   antes e depois. */
-
-/* Botão "Secondary" do Framer (mesma peça do ieD7TFXTb.js já usada nas
-   tags G-Shop/G-Customizadas do Categoria): ghost, transparente em
-   repouso, pill 44px/radius 22px. Aqui em vez de solid porque o fundo já
-   é preto liso — não precisa de contraste extra pra ler. */
-.curtain__lanc-more {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 44px;
-  padding: 0 24px;
-  border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: transparent;
-  color: #fff;
-  /* mesma voz de CTA do resto do site (ui 700, 0.04em) — a geometria
-     ghost desta posição (44px, raio 22) fica como estava. */
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.curtain__lanc-more-icon {
-  width: 16px;
-  height: 16px;
-  flex: none;
-}
-
-@media (max-width: 900px) {
-  /* respiro medido pra caber no pin: a seção vive numa tela travada, e
-     com 40px/32px o bloco passava 9px do topo (medido em 390x844). */
-  .curtain__lancamentos {
-    padding: 16px 18px;
-    gap: 14px;
-  }
-  .curtain__lanc-head {
-    gap: 6px;
-  }
-  .curtain__lanc-head h2 {
-    font-size: clamp(19px, 6.2vw, 28px);
-  }
-  .curtain__lanc-head p {
-    font-size: 12px;
-    line-height: 1.35;
-  }
-  .curtain__lanc-more {
-    height: 40px;
-    padding: 0 20px;
-    font-size: 12px;
-  }
-  /* Lançamentos em 2 COLUNAS (3 fileiras), nunca em coluna única: a
-     seção vive dentro de um pin — em 1 coluna as 6 peças não cabem na
-     tela travada e a grade rola por dentro, que é o defeito. A foto
-     encolhe pra caber as 3 fileiras no orçamento do pin. */
-  .curtain__lanc-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-  }
-  
-  /* fio vertical: agora entre as 2 colunas */
-  .curtain__lanc-card:not(:nth-child(3n)) {
-    border-right: none;
-  }
-  .curtain__lanc-card:not(:nth-child(2n)) {
-    border-right: 2px solid rgb(228, 228, 231);
-  }
-  /* fio horizontal: a partir da 2ª fileira */
-  .curtain__lanc-card:nth-child(n + 4) {
-    border-top: none;
-  }
-  .curtain__lanc-card:nth-child(n + 3) {
-    border-top: 2px solid rgb(228, 228, 231);
-  }
-}
-
-/* Estas tags são a "CATEGORIA" do site (Figma node 27:64: dois painéis de
-   foto lado a lado, cada um com um título grande centralizado + CTA
-   sublinhado tipo "Explorar Mais"). Fiel a isso, precisam ler como o
-   nome da categoria — não como uma legenda de canto discreta. */
+/* Estas tags são a "CATEGORIA" do site: título grande centralizado + CTA. */
 .curtain__tag {
   position: absolute;
   bottom: 64px;
@@ -258,62 +69,43 @@
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7), 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
-/* CTA sempre visível e sólido em repouso — a interação real (escala +
-   leve subida) é feita via framer-motion (whileHover/whileTap no
-   componente), não CSS estático. */
-/* Botão de categoria maior (pedido): de 48px pra 64px de altura, texto
-   maior — agora leva pra /colecao/:slug de verdade. */
+/* família de botões (index.css): claro alto, 56px, canto reto */
 .curtain__tag-cta {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  height: 64px;
+  justify-content: center;
+  height: 56px;
   padding: 0 36px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
+  border-radius: 0;
+  background: #fff;
   color: #0a0a0a;
   font-family: var(--font-ui);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
-
-.curtain__tag-cta-icon {
-  width: 20px;
-  height: 20px;
-  flex: none;
+.curtain__tag-cta:hover {
+  background: var(--gn-red);
+  color: #fff;
+}
+.curtain__tag-cta:active {
+  transform: translateY(1px);
 }
 
 @media (max-width: 900px) {
   .curtain {
-    height: 1500px;
-    /* A CATEGORIA PARA DE SUBIR POR CIMA DO FILME NO CELULAR.
-       O `-80vh` faz a Categoria escorregar sobre o hero ainda pinado, e
-       no desktop o filme está num quadro 16:9 recuado: a folha sobe pelo
-       vão em volta e o gesto se lê. No celular o filme é full-bleed
-       (ver Hero.css, bloco de 860px), então a mesma folha sobe POR CIMA
-       da cena e corta a tela ao meio, com duas fotos sem relação uma
-       encostada na outra.
-       E não é só feio: o capítulo 3 monta card e CTA no rodapé do palco
-       (bottom 6vh). Medido em 390x844, a borda da Categoria alcança o
-       CTA em y=3933 e o card em y≈4130, enquanto o capítulo só termina
-       em y≈4645. Ou seja, por uns 600px de rolagem a peça "Trevo Gold" e
-       o "VER PEÇAS" ficavam VISÍVEIS e MORTOS ao mesmo tempo, cobertos
-       por uma folha que ninguém vê chegar.
-       Sem o negativo, o filme termina e só então a Categoria entra. */
-    margin-top: 0;
+    height: calc(100dvh + 700px);
   }
   .curtain__pin {
-    top: 90px;
-    /* mesma régua do palco do hero: `vh` conta a tela com a barra do
-       navegador recolhida, e a categoria fecha em UMA tela — com `vh` o
-       CTA de baixo termina atrás da barra enquanto ela está à mostra */
+    /* mesma régua do hero: dvh acompanha a barra do navegador */
     height: calc(100vh - 90px);
     height: calc(100dvh - 90px);
   }
+  /* empilhadas, as portas abrem para cima e para baixo (Curtain.jsx) */
   .curtain__slices {
     flex-direction: column;
   }
@@ -330,20 +122,4 @@
     padding: 0 24px;
     font-size: 15px;
   }
-}
-
-/* O botão "Ver mais" quebrava a seta pra linha de baixo no celular: o
-   texto e o ícone eram dois blocos independentes sem regra de linha, e em
-   390px não cabiam lado a lado. Vira flex que não quebra. */
-.curtain__lanc-more {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.curtain__lanc-more-icon {
-  flex: none;
-  width: 14px;
-  height: auto;
 }

@@ -10,7 +10,7 @@ import "./LogoG.css";
 export default function LogoG({ className = "" }) {
   return (
     <img
-      src="/assets/brand/g-mark.png"
+      src="/assets/brand/g-mark.webp"
       alt="G"
       className={`logo-g ${className}`.trim()}
       draggable="false"

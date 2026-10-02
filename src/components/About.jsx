@@ -15,7 +15,7 @@ export default function About() {
           </div>
         </Link>
         <Link className="about__tile" to="/sobre">
-          <img src="/assets/hero/slice-right-2.jpg" alt="G-Customizadas" />
+          <img src="/assets/hero/slice-right-2.webp" alt="G-Customizadas" />
           <div className="about__tile-overlay" />
           <div className="about__tile-content">
             <h3><LogoG />-Customizadas</h3>

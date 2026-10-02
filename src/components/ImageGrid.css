@@ -33,14 +33,15 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  /* família de botões (index.css): claro, 48px, canto reto */
   background: #fff;
   color: #0a0a0a;
-  padding: 16px 28px;
-  border-radius: 999px;
-  /* mesma voz de CTA do hero (ui 700, 0.04em) — geometria própria */
+  min-height: 48px;
+  padding: 0 28px;
+  border-radius: 0;
   font-family: var(--font-ui);
-  font-size: 15px;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-weight: 700;
   opacity: 0;
@@ -63,7 +64,8 @@
   .image-grid__cta {
     opacity: 1;
     bottom: 20px;
-    padding: 12px 18px;
+    min-height: 44px;
+    padding: 0 18px;
     font-size: 12px;
   }
 }

@@ -176,8 +176,106 @@ textarea {
   .adm__btn:active,
   .adm__btn-fino:active,
   .image-grid__cta:active,
-  .outros-produtos__seta:active {
+  .vitrine__seta:active {
     transform: scale(0.97);
     transition: transform 110ms ease, opacity 90ms ease;
   }
 }
+
+/* ================= FAMÍLIA DE BOTÕES =================
+   Uma só, para o site inteiro. Regra do Figma (IDENTIDADE.md): "sem raio de
+   borda em NADA, luxo bruto"; o vermelho é UM e aparece pouco (só a ação
+   que vende). Medido antes da unificação: produto/login/404 já eram retos,
+   mas hero, portas da Categoria, VER MAIS e grade de imagens eram pílulas.
+
+   .btn            base: reto, Open Sauce One 700, caixa alta
+   .btn--principal vermelho, texto branco (comprar, ver peças, entrar)
+   .btn--claro     branco, texto preto (sobre foto escura)
+   .btn--contorno  transparente, fio de 1px (ação secundária no escuro)
+   .btn--escuro    preto, texto branco (ação secundária no claro)
+   .btn--g         alto (56px), para a ação principal de uma tela
+   .btn-texto      link sublinhado, sem caixa (VER MAIS, Explorar)
+   ==================================================== */
+.btn {
+  --btn-h: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--btn-h);
+  padding: 0 28px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn--g {
+  --btn-h: 56px;
+  padding: 0 36px;
+  font-size: 14px;
+}
+.btn--principal {
+  background: var(--gn-red);
+  color: #fff;
+}
+.btn--principal:hover {
+  background: #fff;
+  color: #0a0a0a;
+}
+.btn--claro {
+  background: #fff;
+  color: #0a0a0a;
+}
+.btn--claro:hover {
+  background: var(--gn-red);
+  color: #fff;
+}
+.btn--contorno {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.btn--contorno:hover {
+  background: #fff;
+  color: #0a0a0a;
+  border-color: #fff;
+}
+.btn--escuro {
+  background: #0a0a0a;
+  color: #fff;
+}
+.btn--escuro:hover {
+  background: var(--gn-red);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--gn-red);
+  outline-offset: 3px;
+}
+.btn-texto {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+}
+.btn-texto:hover {
+  color: var(--gn-red);
+}
+

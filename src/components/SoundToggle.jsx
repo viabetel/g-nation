@@ -77,8 +77,11 @@ export default function SoundToggle() {
         })
         .catch(() => {});
 
-    // primeiro gesto do usuário libera o áudio quando o autoplay é bloqueado
-    const gestures = ["pointerdown", "keydown", "wheel", "touchstart"];
+    // Primeiro gesto libera o áudio quando o autoplay é bloqueado (todo
+    // navegador bloqueia som antes da primeira interação). Só contam os
+    // eventos que o navegador aceita como interação: clique, toque e tecla.
+    // Roda do mouse e rolagem NÃO contam, então não estão aqui.
+    const gestures = ["pointerdown", "pointerup", "click", "touchend", "keydown"];
     const onGesture = () => tryPlay();
     const arm = () =>
       gestures.forEach((g) =>

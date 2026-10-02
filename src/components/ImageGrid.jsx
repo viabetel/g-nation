@@ -7,10 +7,10 @@ export default function ImageGrid() {
   return (
     <Link className="image-grid" to="/colecao/g-shop" aria-label="Ver coleção completa">
       <div className="image-grid__tile">
-        <img src="/assets/banner/homem-corrente.png" alt="" />
+        <img src="/assets/banner/homem-corrente.webp" alt="" />
       </div>
       <div className="image-grid__tile">
-        <img src="/assets/banner/maos-aneis.png" alt="" />
+        <img src="/assets/banner/maos-aneis.webp" alt="" />
       </div>
       <span className="image-grid__cta">
         Ver coleção <span aria-hidden="true">→</span>

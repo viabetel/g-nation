@@ -1,0 +1,72 @@
+/* Card de joia da home (Lançamentos e "Confira também"). */
+.joia {
+  position: relative;
+  /* régua da OUD: célula 398x361 */
+  aspect-ratio: 398 / 361;
+  background: #0d0d0d;
+  overflow: hidden;
+}
+.joia__link {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+/* o card já vem no formato da célula, com a joia no tamanho padrão */
+.joia__foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.joia:hover .joia__foto {
+  transform: scale(1.05);
+}
+/* etiqueta reta, preta, dentro da célula */
+.joia__etiqueta {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #080808;
+  color: #fff;
+  transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.joia:hover .joia__etiqueta {
+  background: var(--gn-red);
+}
+.joia__nome {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.joia__preco {
+  display: flex;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.82);
+}
+.joia__preco s {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 900px) {
+  .joia__etiqueta {
+    left: 8px;
+    bottom: 8px;
+    padding: 8px 9px;
+  }
+  .joia__nome {
+    font-size: 11px;
+    white-space: normal;
+  }
+  .joia__preco {
+    font-size: 11px;
+  }
+}

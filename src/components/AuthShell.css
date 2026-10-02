@@ -41,8 +41,9 @@
 .auth {
   position: relative;
   min-height: 100vh;
-  background: #fff6f6;
-  color: #000;
+  /* fundo cinza chumbo (pedido do cliente); era o creme #fff6f6 do Figma */
+  background: #151515;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,9 +92,9 @@
   z-index: 1;
   background: radial-gradient(
       ellipse 62% 70% at 50% 50%,
-      rgba(255, 246, 246, 0.88) 0%,
-      rgba(255, 246, 246, 0.8) 45%,
-      rgba(255, 246, 246, 0.72) 100%
+      rgba(21, 21, 21, 0.9) 0%,
+      rgba(21, 21, 21, 0.84) 45%,
+      rgba(21, 21, 21, 0.76) 100%
     );
   pointer-events: none;
 }
@@ -110,12 +111,12 @@
      x=125 a x=1964 num frame de 1920) — não empoçado num canto só */
   transform: translate(-58%, -50%) rotate(-15deg);
   background: var(--gn-red, #ff0000);
-  opacity: 0.13;
-  mask-image: url(/assets/brand/g-mark.png);
+  opacity: 0.16;
+  mask-image: url(/assets/brand/g-mark.webp);
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
-  -webkit-mask-image: url(/assets/brand/g-mark.png);
+  -webkit-mask-image: url(/assets/brand/g-mark.webp);
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
@@ -164,7 +165,7 @@
   font-size: 13px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #000;
+  color: #fff;
   transition: opacity 0.2s ease;
 }
 
@@ -177,6 +178,7 @@
 .auth__back img {
   width: 18px;
   height: 18px;
+  filter: invert(1); /* seta preta do Figma, agora sobre o chumbo */
 }
 
 /* CAMADA 4 — 27:370, o quadro. Sem padding próprio: o clipe precisa
@@ -187,7 +189,7 @@
   width: 460px;
   max-width: 100%;
   background: #fff;
-  border: 1px solid #000;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -325,7 +327,7 @@
   width: 6px;
   height: 6px;
   flex: none;
-  border-radius: 50%;
+  border-radius: 0;
   border: 1px solid currentColor;
   transition: background-color 0.2s ease;
 }
@@ -690,7 +692,7 @@
 
   /* sem o vídeo atrás, o véu não precisa ser translúcido */
   .auth__scrim {
-    background: #fff6f6;
+    background: #151515;
   }
 
   .auth__wordmark img {
