@@ -11,6 +11,14 @@ import { supabase } from "../supabase";
 export const INSTAGRAM_URL = "https://www.instagram.com/gnationoficial/";
 export const INSTAGRAM_ARROBA = "@gnationoficial";
 
+// Prazo de PRODUÇÃO (texto do cliente, página /prazo-de-entrega). Toda peça
+// é feita sob pedido e o prazo conta da confirmação do pagamento; o
+// transporte começa depois que a peça é despachada.
+export const PRAZO_TRADICIONAL = "10 a 15 dias úteis";
+export const PRAZO_PERSONALIZADA = "até 30 dias úteis";
+export const prazoProducao = (produto) =>
+  produto?.category === "G-Customizadas" ? PRAZO_PERSONALIZADA : PRAZO_TRADICIONAL;
+
 const PADRAO = { email: "contato@gnation.com.br", whatsapp: "", prazo: "2 a 5 dias úteis", freteGratisAcima: 0, fretePadrao: 0 };
 
 // Número de exemplo que ficou semeado no banco (não é da loja). Enquanto

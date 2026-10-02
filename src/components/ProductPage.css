@@ -689,3 +689,13 @@
 .pp__detalhes dd.is-ultimas {
   color: var(--gn-red);
 }
+
+/* link "Ver prazos" na linha de entrega */
+.pp__shipping a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pp__shipping a:hover {
+  color: var(--gn-red, #ff0000);
+}

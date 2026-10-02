@@ -17,6 +17,7 @@ import {
   telefoneValido,
 } from "../lib/br";
 import "./CheckoutPage.css";
+import { PRAZO_PERSONALIZADA, PRAZO_TRADICIONAL } from "../lib/loja";
 import { fotoProduto } from "../lib/img";
 import { rolarAte } from "./SmoothScroll";
 import { criarCheckoutShopify, shopifyConfigurado } from "../lib/shopify";
@@ -593,6 +594,12 @@ export default function CheckoutPage() {
                   {erros.uf && <span className="ck__campo-erro">{erros.uf}</span>}
                 </div>
               </div>
+
+              <p className="ck__nota">
+                Cada joia é produzida sob pedido: {PRAZO_TRADICIONAL} (personalizadas {PRAZO_PERSONALIZADA}) após a
+                confirmação do pagamento. O transporte começa quando a peça é despachada.{" "}
+                <Link to="/prazo-de-entrega">Ver prazos</Link>
+              </p>
             </section>
 
             {/* ---------- PAGAMENTO ---------- */}

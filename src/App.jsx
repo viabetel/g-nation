@@ -16,7 +16,7 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import AccountPage from "./components/AccountPage";
 import NotFoundPage from "./components/NotFoundPage";
-import { ContatoPage, TrocasPage, PrivacidadePage } from "./components/Institucional";
+import { ContatoPage, TrocasPage, PrivacidadePage, PrazoPage } from "./components/Institucional";
 import CheckoutPage from "./components/CheckoutPage";
 import OrderPage from "./components/OrderPage";
 import CartDrawer from "./components/CartDrawer";
@@ -127,6 +127,7 @@ function App() {
               que não existia */}
           <Route path="/contato" element={<ContatoPage />} />
           <Route path="/trocas-e-devolucoes" element={<TrocasPage />} />
+          <Route path="/prazo-de-entrega" element={<PrazoPage />} />
           <Route path="/politica-de-privacidade" element={<PrivacidadePage />} />
 
           {/* PAINEL DA LOJA (Figma 27:545). Rotas aninhadas: a sidebar

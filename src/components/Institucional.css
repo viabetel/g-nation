@@ -175,3 +175,23 @@ a.contato__valor:hover {
     font-size: 15px;
   }
 }
+
+/* assinatura da marca no fim do texto do cliente */
+.inst__assinatura {
+  margin-top: 56px !important;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px !important;
+  letter-spacing: 0.04em;
+  color: #fff !important;
+}
+.inst__assinatura span {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gn-red);
+}

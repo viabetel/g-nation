@@ -129,6 +129,7 @@ export default function Footer() {
         <div className="footer__legal">
           <Link to="/politica-de-privacidade">Política de Privacidade</Link>
           <span>Termos de Uso</span>
+          <Link to="/prazo-de-entrega">Prazo de Entrega</Link>
           <Link to="/trocas-e-devolucoes">Trocas e Devoluções</Link>
         </div>
       </div>

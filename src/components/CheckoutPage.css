@@ -619,3 +619,9 @@
   font-size: 12px;
   color: #c40000;
 }
+
+.ck__nota a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

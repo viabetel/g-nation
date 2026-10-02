@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { INSTAGRAM_ARROBA, INSTAGRAM_URL, formatarWhatsapp, linkWhatsapp, useLoja } from "../lib/loja";
+import {
+  INSTAGRAM_ARROBA,
+  INSTAGRAM_URL,
+  PRAZO_PERSONALIZADA,
+  PRAZO_TRADICIONAL,
+  formatarWhatsapp,
+  linkWhatsapp,
+  useLoja,
+} from "../lib/loja";
 import "./Institucional.css";
 
 // Páginas institucionais: contato, trocas e devoluções, privacidade.
@@ -128,6 +136,46 @@ export function TrocasPage() {
 
       <p className="inst__nota">
         Dúvidas? Fale com a gente na página de <Link to="/contato">contato</Link>.
+      </p>
+    </Casca>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* PRAZO DE ENTREGA (texto do cliente)                                  */
+/* ------------------------------------------------------------------ */
+export function PrazoPage() {
+  return (
+    <Casca cheio="Prazo de" vazado="Entrega">
+      <p>
+        Todas as nossas joias são produzidas especialmente para cada pedido. O prazo de produção começa a contar
+        somente após a confirmação do pagamento.
+      </p>
+
+      <h2>Peças tradicionais</h2>
+      <p>Prazo de {PRAZO_TRADICIONAL}, contados a partir da confirmação do pagamento.</p>
+
+      <h2>Peças personalizadas</h2>
+      <p>
+        Prazo de {PRAZO_PERSONALIZADA}, contados a partir da confirmação do pagamento, devido ao desenvolvimento e
+        produção personalizada da peça.
+      </p>
+
+      <h2>Peças exclusivas</h2>
+      <p>
+        Para criar uma joia exclusiva, pode ser necessário desenvolver um novo molde 3D especialmente para o projeto.
+        Nesse caso, o prazo de produção começa após a confirmação do pagamento e pode variar de acordo com a
+        complexidade da criação e do molde.
+      </p>
+
+      <p className="inst__nota">
+        <strong>Importante:</strong> os prazos informados são referentes ao prazo de produção da joia. O prazo de
+        envio/transporte começa após a peça ser finalizada e despachada.
+      </p>
+
+      <p className="inst__assinatura">
+        GNATION
+        <span>Made for those who stand out.</span>
       </p>
     </Casca>
   );

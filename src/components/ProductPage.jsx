@@ -6,7 +6,7 @@ import Wordmark from "./Wordmark";
 import Navbar from "./Navbar";
 import { useCart } from "../CartContext";
 import "./ProductPage.css";
-import { INSTAGRAM_URL, fraseFrete, useLoja } from "../lib/loja";
+import { INSTAGRAM_URL, fraseFrete, prazoProducao, useLoja } from "../lib/loja";
 import { fotoProduto } from "../lib/img";
 
 // Motion da página (framer-motion): foto entra com fade+scale suave, a
@@ -169,7 +169,10 @@ export default function ProductPage() {
             <img src="/assets/produto/icon-truck.svg" alt="" />
             <div>
               <strong>{fraseFrete(loja)}</strong>
-              <span>Entrega em {loja.prazo}.</span>
+              <span>
+                Produção em {prazoProducao(product)} após a confirmação do pagamento. O envio começa quando a peça é
+                despachada. <Link to="/prazo-de-entrega">Ver prazos</Link>
+              </span>
             </div>
           </motion.div>
 
